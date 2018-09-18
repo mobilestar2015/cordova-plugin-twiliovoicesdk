@@ -27,6 +27,8 @@
     <!-- Option to mask the incoming phone number for privacy -->
     <preference name="MASK_INCOMING_PHONE_NUMBER" default="false"/>
 
+    <dependency id="cordova-plugin-cocoapod-support"/>
+
      <!-- android -->
     <platform name="android">
 
@@ -89,6 +91,7 @@
 
     <!-- ios -->
     <platform name="ios">
+        <pods-config ios-min-version="9.0"/>
         <!-- Add the Twilio Voice plugin to the iOS app's config.xml -->
         <config-file target="config.xml" parent="widget">
           <feature name="TwilioVoicePlugin">
@@ -97,13 +100,14 @@
           </feature>
         </config-file>
 
-        <framework src="SystemConfiguration.framework" />
+        <!-- <framework src="SystemConfiguration.framework" />
         <framework src="AudioToolbox.framework" />
         <framework src="AVFoundation.framework" />
         <framework src="CoreTelephony.framework" />
         <framework src="PushKit.framework" />
-        <framework src="CallKit.framework" />
+        <framework src="CallKit.framework" /> -->
                 
+        <pod name="TwilioVoice" spec="~> 2.0.0">
         <!-- Add support for background VOIP and audio to the plist -->
         <config-file target="*-Info.plist" parent="UIBackgroundModes">
             <array>
