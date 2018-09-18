@@ -107,7 +107,7 @@
         <framework src="PushKit.framework" />
         <framework src="CallKit.framework" /> -->
                 
-        <pod name="TwilioVoice" spec="~> 2.0.0">
+        <pod name="TwilioVoice" spec="~> 2.0.0"/>
         <!-- Add support for background VOIP and audio to the plist -->
         <config-file target="*-Info.plist" parent="UIBackgroundModes">
             <array>
@@ -151,12 +151,5 @@
 <!--         <framework src="TwilioVoice" type="podspec" spec="2.0.4" /> -->
         <resource-file src="sounds/ringing.wav" />
         <resource-file src="sounds/traditionalring.mp3" />
-        <info>
-You need to download __Twilio Voice SDK for iOS__ from https://media.twiliocdn.com/sdk/ios/voice/releases/2.0.1/twilio-voice-ios-2.0.1.tar.bz2. Uncompress the download - you will need to follow two steps that plugman can not do yet:
-
-* Add the Twilio Voice framework (TwilioVoice.framework) to your Xcode project
-* Add the Twilio Voice framework (TwilioVoice.framework) as an embedded binary to your Xcode project
-
-        </info>
     </platform>
 </plugin>
