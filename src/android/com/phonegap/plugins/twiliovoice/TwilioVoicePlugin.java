@@ -14,11 +14,12 @@ import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.twilio.voice.Call;
 import com.twilio.voice.CallException;
 import com.twilio.voice.CallInvite;
@@ -71,6 +72,7 @@ public class TwilioVoicePlugin extends CordovaPlugin {
 
 	// Has the plugin been initialized
 	private boolean mInitialized = false;
+	private boolean mPermissionGranted = false;
 
 	// An incoming call intent to process (can be null)
 	private Intent mIncomingCallIntent;
@@ -88,6 +90,8 @@ public class TwilioVoicePlugin extends CordovaPlugin {
 
 	private AudioManager audioManager;
 	private int savedAudioMode = AudioManager.MODE_INVALID;
+
+    private static final int MIC_PERMISSION_REQUEST_CODE = 1;
 
 	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -177,6 +181,11 @@ public class TwilioVoicePlugin extends CordovaPlugin {
 		if (intent.getAction().equals(ACTION_INCOMING_CALL)) {
 			mIncomingCallIntent = intent;
 		}
+
+		// check audio permission
+        if (checkPermissionForMicrophone()) {
+            mPermissionGranted = true;
+        }
 	}
 
 	@Override
@@ -228,7 +237,11 @@ public class TwilioVoicePlugin extends CordovaPlugin {
 				mIncomingCallIntent = null;
 			}
 
-			javascriptCallback("onclientinitialized",mInitCallbackContext);
+			if (mPermissionGranted) {
+                javascriptCallback("onclientinitialized",mInitCallbackContext);
+            } else {
+			    requestPermissionForMicrophone();
+            }
 
 			return true;
 
@@ -547,17 +560,36 @@ public class TwilioVoicePlugin extends CordovaPlugin {
         super.onDestroy();
 	}
 
+	private boolean checkPermissionForMicrophone() {
+		int resultMic = ContextCompat.checkSelfPermission(cordova.getActivity(), Manifest.permission.RECORD_AUDIO);
+		return resultMic == PackageManager.PERMISSION_GRANTED;
+	}
+
+	private void requestPermissionForMicrophone() {
+		if (ActivityCompat.shouldShowRequestPermissionRationale(cordova.getActivity(), Manifest.permission.RECORD_AUDIO)) {
+            mInitCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Microphone permissions needed. Please allow in your application settings."));
+		} else {
+			cordova.requestPermission(
+                    this,
+                    MIC_PERMISSION_REQUEST_CODE,
+					Manifest.permission.RECORD_AUDIO);
+		}
+	}
+
 	public void onRequestPermissionResult(int requestCode, String[] permissions,
 										  int[] grantResults) throws JSONException
 	{
-		for(int r:grantResults)
-		{
-			if(r == PackageManager.PERMISSION_DENIED)
-			{
-				mInitCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Permission denied"));
-				return;
-			}
-		}
+        /*
+         * Check if microphone permissions is granted
+         */
+        if (requestCode == MIC_PERMISSION_REQUEST_CODE && permissions.length > 0) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                mInitCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Microphone permissions needed. Please allow in your application settings."));
+            } else {
+                mPermissionGranted = true;
+                javascriptCallback("onclientinitialized",mInitCallbackContext);
+            }
+        }
 	}
 
     /*

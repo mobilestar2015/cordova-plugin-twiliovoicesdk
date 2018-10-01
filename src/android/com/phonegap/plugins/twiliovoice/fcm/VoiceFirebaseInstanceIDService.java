@@ -20,12 +20,12 @@ public class VoiceFirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Refreshed token: " + refreshedToken);
+        // String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        // Log.d(TAG, "Refreshed token: " + refreshedToken);
 
-        // Notify Activity of FCM token
-        Intent intent = new Intent(TwilioVoicePlugin.ACTION_SET_FCM_TOKEN);
-        intent.putExtra(TwilioVoicePlugin.KEY_FCM_TOKEN, refreshedToken);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        // // Notify Activity of FCM token
+        // Intent intent = new Intent(TwilioVoicePlugin.ACTION_SET_FCM_TOKEN);
+        // intent.putExtra(TwilioVoicePlugin.KEY_FCM_TOKEN, refreshedToken);
+        // LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
