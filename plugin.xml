@@ -54,8 +54,8 @@
                     android:name="com.phonegap.plugins.twiliovoice.fcm.VoiceFirebaseInstanceIDService" >
                 <intent-filter>
                     <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-                </intent-filter> -->
-            </service>
+                </intent-filter>  -->
+            <!-- </service> -->
             <!-- [END instanceId_listener] -->
 
             <meta-data
